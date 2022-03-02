@@ -1,15 +1,16 @@
 <script lang="ts">
   // Physical Radius of a dart board : 457mm
   // Dimensions are in mm
-  const targetRadius = 457 / 2;
-  const doubleRadius = 400 / 2;
-  const exteriorSimpleRadius = 350 / 2;
-  const tripleRadius = 170 / 2;
-  const interiorSimpleRadius = 150 / 2;
-  const bullRadius = 40 / 2;
-  const bullsEyeRadius = 20 / 2;
+  // from https://www.dimensions.com/element/dartboard
+  const targetRadius = 451 / 2;
+  const doubleRadius = 170;
+  const exteriorSimpleRadius = doubleRadius - 8;
+  const trebleRadius = 107;
+  const interiorSimpleRadius = trebleRadius - 8;
+  const bullRadius = 32 / 2;
+  const bullsEyeRadius = 12.7 / 2;
 
-  const doubleTripleColors = ["red", "green"];
+  const doubleTrebleColors = ["red", "green"];
   const simpleColors = ["black", "white"];
 
   //numbers clockwise from 20
@@ -58,7 +59,7 @@
 
   {#each segments as segmentNumber, segmentPosition}
     <!-- compute colors -->
-    {@const doubleTripleColor = doubleTripleColors[segmentPosition % 2]}
+    {@const doubleTrebleColor = doubleTrebleColors[segmentPosition % 2]}
     {@const simpleColor = simpleColors[segmentPosition % 2]}
     <!-- compute positions -->
     {@const leftBorderAxisX = Math.cos(
@@ -73,7 +74,7 @@
     {@const rightBorderAxisY = Math.sin(
       (segmentPosition + 1) * segmentArcRad - segmentArcOffsetRad
     )}
-    <!-- triple -->
+    <!-- treble -->
     <path
       d="
         M {leftBorderAxisX * doubleRadius},{leftBorderAxisY * doubleRadius}
@@ -87,7 +88,7 @@
         Z
         "
       stroke="black"
-      fill={doubleTripleColor}
+      fill={doubleTrebleColor}
     />
     <!-- exterior simple -->
     <path
@@ -96,9 +97,9 @@
         exteriorSimpleRadius}
         A {exteriorSimpleRadius},{exteriorSimpleRadius} 0 0,1 {rightBorderAxisX *
         exteriorSimpleRadius},{rightBorderAxisY * exteriorSimpleRadius}
-        L {rightBorderAxisX * tripleRadius},{rightBorderAxisY * tripleRadius}
-        A {tripleRadius},{tripleRadius} 0 0,0 {leftBorderAxisX *
-        tripleRadius},{leftBorderAxisY * tripleRadius}
+        L {rightBorderAxisX * trebleRadius},{rightBorderAxisY * trebleRadius}
+        A {trebleRadius},{trebleRadius} 0 0,0 {leftBorderAxisX *
+        trebleRadius},{leftBorderAxisY * trebleRadius}
         L {leftBorderAxisX * exteriorSimpleRadius},{leftBorderAxisY *
         exteriorSimpleRadius}
         Z
@@ -109,18 +110,18 @@
     <!-- interior simple -->
     <path
       d="
-        M {leftBorderAxisX * tripleRadius},{leftBorderAxisY * tripleRadius}
-        A {tripleRadius},{tripleRadius} 0 0,1 {rightBorderAxisX *
-        tripleRadius},{rightBorderAxisY * tripleRadius}
+        M {leftBorderAxisX * trebleRadius},{leftBorderAxisY * trebleRadius}
+        A {trebleRadius},{trebleRadius} 0 0,1 {rightBorderAxisX *
+        trebleRadius},{rightBorderAxisY * trebleRadius}
         L {rightBorderAxisX * interiorSimpleRadius},{rightBorderAxisY *
         interiorSimpleRadius}
         A {interiorSimpleRadius},{interiorSimpleRadius} 0 0,0 {leftBorderAxisX *
         interiorSimpleRadius},{leftBorderAxisY * interiorSimpleRadius}
-        L {leftBorderAxisX * tripleRadius},{leftBorderAxisY * tripleRadius}
+        L {leftBorderAxisX * trebleRadius},{leftBorderAxisY * trebleRadius}
         Z
         "
       stroke="black"
-      fill={doubleTripleColor}
+      fill={doubleTrebleColor}
     />
     <!-- interior simple -->
     <path

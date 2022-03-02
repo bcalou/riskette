@@ -27,8 +27,17 @@
   const sectionArcRad = (Math.PI * 2) / nbSections;
   const firstSectionArcOffsetRad = -(Math.PI * 2) - sectionArcRad / 2;
 
-  function onBullsEyeClick() {
-    console.log("bulls eye click");
+  enum Area {
+    DoubleRing,
+    OuterSimple,
+    TrebleRing,
+    InnerSimple,
+    Bull,
+    BullsEye,
+  }
+
+  function onAreaHit(area: Area, value?: number) {
+    console.log({ area, value });
   }
 </script>
 
@@ -72,18 +81,21 @@
     <!-- Treble ring area -->
     <path
       d="
-        M {leftBorderAxisX * doubleRingRadius},{leftBorderAxisY * doubleRingRadius}
+        M {leftBorderAxisX * doubleRingRadius},{leftBorderAxisY *
+        doubleRingRadius}
         A {doubleRingRadius},{doubleRingRadius} 0 0,1 {rightBorderAxisX *
         doubleRingRadius},{rightBorderAxisY * doubleRingRadius}
         L {rightBorderAxisX * outerSimpleRadius},{rightBorderAxisY *
         outerSimpleRadius}
         A {outerSimpleRadius},{outerSimpleRadius} 0 0,0 {leftBorderAxisX *
         outerSimpleRadius},{leftBorderAxisY * outerSimpleRadius}
-        L {leftBorderAxisX * doubleRingRadius},{leftBorderAxisY * doubleRingRadius}
+        L {leftBorderAxisX * doubleRingRadius},{leftBorderAxisY *
+        doubleRingRadius}
         Z
         "
       stroke={dividerColor}
       fill={doubleTrebleColor}
+      on:click={() => onAreaHit(Area.TrebleRing, sectionValue)}
     />
 
     <!-- Outer simple area -->
@@ -93,7 +105,8 @@
         outerSimpleRadius}
         A {outerSimpleRadius},{outerSimpleRadius} 0 0,1 {rightBorderAxisX *
         outerSimpleRadius},{rightBorderAxisY * outerSimpleRadius}
-        L {rightBorderAxisX * trebleRingRadius},{rightBorderAxisY * trebleRingRadius}
+        L {rightBorderAxisX * trebleRingRadius},{rightBorderAxisY *
+        trebleRingRadius}
         A {trebleRingRadius},{trebleRingRadius} 0 0,0 {leftBorderAxisX *
         trebleRingRadius},{leftBorderAxisY * trebleRingRadius}
         L {leftBorderAxisX * outerSimpleRadius},{leftBorderAxisY *
@@ -102,23 +115,27 @@
         "
       stroke={dividerColor}
       fill={simpleColor}
+      on:click={() => onAreaHit(Area.OuterSimple, sectionValue)}
     />
 
     <!-- Double ring area -->
     <path
       d="
-        M {leftBorderAxisX * trebleRingRadius},{leftBorderAxisY * trebleRingRadius}
+        M {leftBorderAxisX * trebleRingRadius},{leftBorderAxisY *
+        trebleRingRadius}
         A {trebleRingRadius},{trebleRingRadius} 0 0,1 {rightBorderAxisX *
         trebleRingRadius},{rightBorderAxisY * trebleRingRadius}
         L {rightBorderAxisX * innerSimpleRadius},{rightBorderAxisY *
         innerSimpleRadius}
         A {innerSimpleRadius},{innerSimpleRadius} 0 0,0 {leftBorderAxisX *
         innerSimpleRadius},{leftBorderAxisY * innerSimpleRadius}
-        L {leftBorderAxisX * trebleRingRadius},{leftBorderAxisY * trebleRingRadius}
+        L {leftBorderAxisX * trebleRingRadius},{leftBorderAxisY *
+        trebleRingRadius}
         Z
         "
       stroke={dividerColor}
       fill={doubleTrebleColor}
+      on:click={() => onAreaHit(Area.DoubleRing, sectionValue)}
     />
 
     <!-- Inner simple area -->
@@ -137,6 +154,7 @@
         "
       stroke={dividerColor}
       fill={simpleColor}
+      on:click={() => onAreaHit(Area.InnerSimple, sectionValue)}
     />
   {/each}
 
@@ -152,11 +170,16 @@
       a {bullsEyeRadius},{bullsEyeRadius} 0 1,0 -{bullsEyeRadius * 2},0
       Z
       "
-      fill={bullColor}
+    fill={bullColor}
+    on:click={() => onAreaHit(Area.Bull)}
   />
 
   <!-- Bull's eye -->
-  <circle r={bullsEyeRadius} fill={bullsEyeColor} on:click={onBullsEyeClick} />
+  <circle
+    r={bullsEyeRadius}
+    fill={bullsEyeColor}
+    on:click={() => onAreaHit(Area.BullsEye)}
+  />
 </svg>
 
 <style>

@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { Area } from "./area";
+  import type { Hit } from "./hit";
+
+  export let sections;
+
   // Physical Radius of a dart board : 457mm
   // Dimensions are in mm
   // All radiuses are the outer bounds
@@ -17,27 +22,13 @@
   const bullsEyeColor = ringsColors[0];
   const dividerColor = "black";
 
-  // Numbers clockwise from 20
-  const sections = [
-    20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5,
-  ];
-
   // Helpers
   const nbSections = sections.length;
   const sectionArcRad = (Math.PI * 2) / nbSections;
   const firstSectionArcOffsetRad = -(Math.PI * 2) - sectionArcRad / 2;
 
-  enum Area {
-    DoubleRing,
-    OuterSimple,
-    TrebleRing,
-    InnerSimple,
-    Bull,
-    BullsEye,
-  }
-
-  function onAreaHit(area: Area, value?: number) {
-    console.log({ area, value });
+  function onAreaHit(hit: Hit) {
+    console.log(hit);
   }
 </script>
 
@@ -59,7 +50,7 @@
     "
   />
 
-  {#each sections as sectionValue, sectionIndex}
+  {#each sections as section, sectionIndex}
     <!-- Compute colors -->
     {@const doubleTrebleColor = ringsColors[sectionIndex % 2]}
     {@const simpleColor = simpleColors[sectionIndex % 2]}
@@ -95,7 +86,7 @@
         "
       stroke={dividerColor}
       fill={doubleTrebleColor}
-      on:click={() => onAreaHit(Area.TrebleRing, sectionValue)}
+      on:click={() => onAreaHit({ area: Area.TrebleRing, section })}
     />
 
     <!-- Outer simple area -->
@@ -115,7 +106,7 @@
         "
       stroke={dividerColor}
       fill={simpleColor}
-      on:click={() => onAreaHit(Area.OuterSimple, sectionValue)}
+      on:click={() => onAreaHit({ area: Area.OuterSimple, section })}
     />
 
     <!-- Double ring area -->
@@ -135,7 +126,7 @@
         "
       stroke={dividerColor}
       fill={doubleTrebleColor}
-      on:click={() => onAreaHit(Area.DoubleRing, sectionValue)}
+      on:click={() => onAreaHit({ area: Area.DoubleRing, section })}
     />
 
     <!-- Inner simple area -->
@@ -154,7 +145,7 @@
         "
       stroke={dividerColor}
       fill={simpleColor}
-      on:click={() => onAreaHit(Area.InnerSimple, sectionValue)}
+      on:click={() => onAreaHit({ area: Area.InnerSimple, section })}
     />
   {/each}
 
@@ -171,14 +162,14 @@
       Z
       "
     fill={bullColor}
-    on:click={() => onAreaHit(Area.Bull)}
+    on:click={() => onAreaHit({ area: Area.Bull })}
   />
 
   <!-- Bull's eye -->
   <circle
     r={bullsEyeRadius}
     fill={bullsEyeColor}
-    on:click={() => onAreaHit(Area.BullsEye)}
+    on:click={() => onAreaHit({ area: Area.BullsEye })}
   />
 </svg>
 

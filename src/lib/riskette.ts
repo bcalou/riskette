@@ -28,12 +28,44 @@ export class Riskette extends Game {
     5: null,
   };
 
+  private dartsPlayedSinceBeginning = 0;
+
   public hit(hit: Hit) {
     this.history.push(hit);
+  }
+
+  private computeState(newHit: Hit) {
+
   }
 
   public getOwner(section: number): Player | null {
     return this.territories[section];
   }
-}
 
+  public getCurrentPlayer() {
+    return this.players[this.getCurrentTurn()];
+  }
+
+  /**
+   * 
+   * @returns the current dart number to throw. 0 being the first dart
+   */
+  public getCurrentTurnDartNumber() {
+    const firstDartNumberForThisTurn = this.getCurrentTurn() * dartsPerTurn;
+    return this.dartsPlayedSinceBeginning - firstDartNumberForThisTurn;
+  }
+
+  public getCurrentTurnRemainingDarts() {
+    return dartsPerTurn - this.getCurrentTurnDartNumber();
+  }
+
+  /* Note: turn c'est ptet pas assez clair comme terme, je sais même pas si c'ets correct en anglais */
+  /**
+   * 
+   * @returns current turn. turn 0 being the first turn
+   */
+  private getCurrentTurn() {
+    const currentOverallDartNumber = this.dartsPlayedSinceBeginning;
+    return Math.floor(currentOverallDartNumber/dartsPerTurn);
+  }
+}

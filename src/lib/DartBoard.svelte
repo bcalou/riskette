@@ -1,14 +1,18 @@
 <script lang="ts">
+  import DartBoardArea from "./DartBoardArea.svelte";
   import { Area } from "./area";
   import type { Hit } from "./hit";
+  import type { Riskette } from './riskette';
 
-  export let sections;
+  export let game: Riskette;
+  const sections = game.getSections();
 
   // Physical Radius of a dart board : 457mm
   // Dimensions are in mm
   // All radiuses are the outer bounds
   // from https://www.dimensions.com/element/dartboard
   const targetRadius = 451 / 2;
+  const playerMarkerRingRadius = 178;
   const doubleRingRadius = 170;
   const outerSimpleRadius = doubleRingRadius - 8;
   const trebleRingRadius = 107;
@@ -69,83 +73,67 @@
       (sectionIndex + 1) * sectionArcRad - firstSectionArcOffsetRad
     )}
 
-    <!-- Treble ring area -->
-    <path
-      d="
-        M {leftBorderAxisX * doubleRingRadius},{leftBorderAxisY *
-        doubleRingRadius}
-        A {doubleRingRadius},{doubleRingRadius} 0 0,1 {rightBorderAxisX *
-        doubleRingRadius},{rightBorderAxisY * doubleRingRadius}
-        L {rightBorderAxisX * outerSimpleRadius},{rightBorderAxisY *
-        outerSimpleRadius}
-        A {outerSimpleRadius},{outerSimpleRadius} 0 0,0 {leftBorderAxisX *
-        outerSimpleRadius},{leftBorderAxisY * outerSimpleRadius}
-        L {leftBorderAxisX * doubleRingRadius},{leftBorderAxisY *
-        doubleRingRadius}
-        Z
-        "
-      stroke={dividerColor}
-      fill={doubleTrebleColor}
-      on:click={() => onAreaHit({ area: Area.TrebleRing, section })}
-    />
-
-    <!-- Outer simple area -->
-    <path
-      d="
-        M {leftBorderAxisX * outerSimpleRadius},{leftBorderAxisY *
-        outerSimpleRadius}
-        A {outerSimpleRadius},{outerSimpleRadius} 0 0,1 {rightBorderAxisX *
-        outerSimpleRadius},{rightBorderAxisY * outerSimpleRadius}
-        L {rightBorderAxisX * trebleRingRadius},{rightBorderAxisY *
-        trebleRingRadius}
-        A {trebleRingRadius},{trebleRingRadius} 0 0,0 {leftBorderAxisX *
-        trebleRingRadius},{leftBorderAxisY * trebleRingRadius}
-        L {leftBorderAxisX * outerSimpleRadius},{leftBorderAxisY *
-        outerSimpleRadius}
-        Z
-        "
-      stroke={dividerColor}
-      fill={simpleColor}
-      on:click={() => onAreaHit({ area: Area.OuterSimple, section })}
+    <!-- Player ring area -->
+    <DartBoardArea
+      outerRadius = {playerMarkerRingRadius}
+      innerRadius = {doubleRingRadius}
+      {leftBorderAxisX}
+      {leftBorderAxisY}
+      {rightBorderAxisX}
+      {rightBorderAxisY}
+      fill = {game.getSectionOwner(section)?.color}
     />
 
     <!-- Double ring area -->
-    <path
-      d="
-        M {leftBorderAxisX * trebleRingRadius},{leftBorderAxisY *
-        trebleRingRadius}
-        A {trebleRingRadius},{trebleRingRadius} 0 0,1 {rightBorderAxisX *
-        trebleRingRadius},{rightBorderAxisY * trebleRingRadius}
-        L {rightBorderAxisX * innerSimpleRadius},{rightBorderAxisY *
-        innerSimpleRadius}
-        A {innerSimpleRadius},{innerSimpleRadius} 0 0,0 {leftBorderAxisX *
-        innerSimpleRadius},{leftBorderAxisY * innerSimpleRadius}
-        L {leftBorderAxisX * trebleRingRadius},{leftBorderAxisY *
-        trebleRingRadius}
-        Z
-        "
-      stroke={dividerColor}
+    <DartBoardArea
+      outerRadius = {doubleRingRadius}
+      innerRadius = {outerSimpleRadius}
+      {leftBorderAxisX}
+      {leftBorderAxisY}
+      {rightBorderAxisX}
+      {rightBorderAxisY}
       fill={doubleTrebleColor}
+      stroke={dividerColor}
+      onClick = {() => onAreaHit({ area: Area.TrebleRing, section })}
+    />
+
+    <!-- Outer simple area -->
+    <DartBoardArea
+      outerRadius = {outerSimpleRadius}
+      innerRadius = {trebleRingRadius}
+      {leftBorderAxisX}
+      {leftBorderAxisY}
+      {rightBorderAxisX}
+      {rightBorderAxisY}
+      fill={simpleColor}
+      stroke={dividerColor}
+      onClick = {() => onAreaHit({ area: Area.TrebleRing, section })}
+    />
+
+    <!-- Treble ring area -->
+    <DartBoardArea
+      outerRadius = {trebleRingRadius}
+      innerRadius = {innerSimpleRadius}
+      {leftBorderAxisX}
+      {leftBorderAxisY}
+      {rightBorderAxisX}
+      {rightBorderAxisY}
+      fill={doubleTrebleColor}
+      stroke={dividerColor}
       on:click={() => onAreaHit({ area: Area.DoubleRing, section })}
     />
 
     <!-- Inner simple area -->
-    <path
-      d="
-        M {leftBorderAxisX * innerSimpleRadius},{leftBorderAxisY *
-        innerSimpleRadius}
-        A {innerSimpleRadius},{innerSimpleRadius} 0 0,1 {rightBorderAxisX *
-        innerSimpleRadius},{rightBorderAxisY * innerSimpleRadius}
-        L {rightBorderAxisX * bullRadius},{rightBorderAxisY * bullRadius}
-        A {bullRadius},{bullRadius} 0 0,0 {leftBorderAxisX *
-        bullRadius},{leftBorderAxisY * bullRadius}
-        L {leftBorderAxisX * innerSimpleRadius},{leftBorderAxisY *
-        innerSimpleRadius}
-        Z
-        "
+    <DartBoardArea
+      outerRadius = {innerSimpleRadius}
+      innerRadius = {bullRadius}
+      {leftBorderAxisX}
+      {leftBorderAxisY}
+      {rightBorderAxisX}
+      {rightBorderAxisY}
       stroke={dividerColor}
       fill={simpleColor}
-      on:click={() => onAreaHit({ area: Area.InnerSimple, section })}
+      onClick = {() => onAreaHit({ area: Area.InnerSimple, section })}
     />
   {/each}
 
@@ -161,6 +149,7 @@
       a {bullsEyeRadius},{bullsEyeRadius} 0 1,0 -{bullsEyeRadius * 2},0
       Z
       "
+      stroke={dividerColor}
     fill={bullColor}
     on:click={() => onAreaHit({ area: Area.Bull })}
   />
@@ -168,6 +157,7 @@
   <!-- Bull's eye -->
   <circle
     r={bullsEyeRadius}
+    stroke={dividerColor}
     fill={bullsEyeColor}
     on:click={() => onAreaHit({ area: Area.BullsEye })}
   />

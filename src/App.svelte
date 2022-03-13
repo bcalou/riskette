@@ -9,12 +9,12 @@
 
   const game = new Riskette(sections, [
     { name: "Saumon", color: "#FFFF00" },
-    { name: "bcalou", color: "#FF0000" },
+    { name: "bcalou", color: "#FF00FF" },
   ]);
 </script>
 
 <h1>Riskette</h1>
-<DartBoard {sections} />
+<DartBoard {game} />
 
 <style>
 </style>

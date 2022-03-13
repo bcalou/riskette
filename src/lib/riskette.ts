@@ -46,7 +46,7 @@ export class Riskette extends Game {
     const doesAttackerOwnTargetedSection = targetedSectionOwner === attacker;
     const attackerIsAtSea = this.playersAtSea.includes(attacker);
     const isTargetedSectionAdjacentToAttackerOwnedSections = this.getSectionNeighbors(targetedSection).filter(section => this.getPlayerSections(attacker).includes(section));
-    const playerCanCaptureSection = 
+    const canPlayerCaptureSection = 
       !doesAttackerOwnTargetedSection
       &&
       (
@@ -55,6 +55,7 @@ export class Riskette extends Game {
         attackerIsAtSea
       )
       ;
+      return canPlayerCaptureSection;
   }
 
 

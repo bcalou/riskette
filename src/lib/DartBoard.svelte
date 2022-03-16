@@ -32,7 +32,7 @@
   const firstSectionArcOffsetRad = -(Math.PI * 2) - sectionArcRad / 2;
 
   function onAreaHit(hit: Hit) {
-    console.log(hit);
+    game.hit(hit);
   }
 </script>
 

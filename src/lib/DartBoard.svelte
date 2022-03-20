@@ -37,6 +37,11 @@
     game = game;
   }
 </script>
+<p style="background-color: {game.getCurrentPlayer().color};font-size:3em;text-align:center;">{game.getCurrentPlayer().name}
+  {#each Array(game.getCurrentTurnRemainingDarts()) as _, i}
+    <span>➶</span>
+  {/each}
+</p>
 
 <svg
   viewBox="{-targetRadius} {-targetRadius} {targetRadius * 2} {targetRadius *

@@ -97,7 +97,7 @@ export class Riskette extends Game {
     return this.getSectionOwner(section) === player;
   }
 
-  private getCurrentPlayer() {
+  public getCurrentPlayer() {
     return this.players[this.getCurrentTurn() % this.players.length];
   }
 
@@ -121,7 +121,7 @@ export class Riskette extends Game {
     return this.dartsPlayedSinceBeginning - firstDartNumberForThisTurn;
   }
 
-  private getCurrentTurnRemainingDarts() {
+  public getCurrentTurnRemainingDarts() {
     return dartsPerTurn - this.getCurrentTurnDartNumber();
   }
 

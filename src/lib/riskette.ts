@@ -77,7 +77,10 @@ export class Riskette extends Game {
     const targetedSectionOwner = this.sectionsOwners[targetedSection];
     const doesAttackerOwnTargetedSection = targetedSectionOwner === attacker;
     const attackerIsAtSea = this.playersAtSea.includes(attacker);
-    const isTargetedSectionAdjacentToAttackerOwnedSections = this.getSectionNeighbors(targetedSection).filter(section => this.getPlayerSections(attacker).includes(section));
+    const isTargetedSectionAdjacentToAttackerOwnedSections = 
+    this.getSectionNeighbors(targetedSection)
+      .filter(filteredSection => this.getPlayerSections(attacker).includes(filteredSection))
+      .length > 0;
     const canPlayerCaptureSection = 
       !doesAttackerOwnTargetedSection
       &&
@@ -95,17 +98,17 @@ export class Riskette extends Game {
   }
 
   private getCurrentPlayer() {
-    return this.players[this.getCurrentTurn()];
+    return this.players[this.getCurrentTurn() % this.players.length];
   }
 
   private getPlayerSections(player: Player): Section[] {
-    let playerOwnedSections = [];
-    for (const section in this.sections) {
+    let playerOwnedSections: Section[] = [];
+    this.sections.forEach(section => {
       const currentSectionOwner = this.sectionsOwners[section]
       if (currentSectionOwner === player) {
         playerOwnedSections.push(section);
       }
-    }
+    });
     return playerOwnedSections;
   }
 

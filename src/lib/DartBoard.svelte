@@ -29,10 +29,12 @@
   // Helpers
   const nbSections = sections.length;
   const sectionArcRad = (Math.PI * 2) / nbSections;
-  const firstSectionArcOffsetRad = -(Math.PI * 2) - sectionArcRad / 2;
+  const firstNumberOffsetRad = Math.PI / 2;
+  const firstSectionArcOffsetRad = Math.PI / 2 - sectionArcRad / 2;
 
   function onAreaHit(hit: Hit) {
     game.hit(hit);
+    game = game;
   }
 </script>
 
@@ -60,6 +62,12 @@
     {@const simpleColor = simpleColors[sectionIndex % 2]}
 
     <!-- Compute positions -->
+    {@const centerAxisX = Math.cos(
+      sectionIndex * sectionArcRad - firstNumberOffsetRad
+    )}
+    {@const centerAxisY = Math.sin(
+      sectionIndex * sectionArcRad - firstNumberOffsetRad
+    )}
     {@const leftBorderAxisX = Math.cos(
       sectionIndex * sectionArcRad - firstSectionArcOffsetRad
     )}
@@ -72,6 +80,18 @@
     {@const rightBorderAxisY = Math.sin(
       (sectionIndex + 1) * sectionArcRad - firstSectionArcOffsetRad
     )}
+
+    <!-- Numbers -->
+    <text
+      x="{centerAxisX * (playerMarkerRingRadius + 20)}"
+      y="{centerAxisY * (playerMarkerRingRadius + 20)}"
+      fill="#fff"
+      style="text-align: center;"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      >
+      {section}
+    </text>
 
     <!-- Player ring area -->
     <DartBoardArea

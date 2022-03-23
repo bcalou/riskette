@@ -5,9 +5,10 @@
   export let rightBorderAxisY: number;
   export let leftBorderAxisX: number;
   export let rightBorderAxisX: number;
-  export let fill: string;
+  export let fill: string = undefined;
   export let stroke: string = undefined;
   export let onClick: svelte.JSX.MouseEventHandler<SVGPathElement> = undefined;
+  export let highlight: boolean = false;
 </script>
 
 <path
@@ -22,4 +23,17 @@
   {fill}
   {stroke}
   on:click={onClick}
+  class="{highlight ? "highlight":""}"
+  filter="{highlight ? "url(#highlight-glow)":""}"
 />
+<style>
+  .highlight {
+    animation: fillColor 1.5s linear infinite;
+  }
+
+  @keyframes fillColor {
+    0% {fill: #000}
+    50% {fill:#555}
+    100% {fill: #000}
+  }
+</style>

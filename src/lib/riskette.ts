@@ -8,26 +8,26 @@ const dartsPerTurn = 3;
 
 export class Riskette extends Game {
   private sectionsOwners: {[key: Section]: Player | null} = {
-    20: null,
-    1: this.players[0],
+    20: this.players[2],
+    1: null,
     18: this.players[0],
-    4: this.players[0],
-    13: null,
+    4: null,
+    13: this.players[2],
     6: null,
     10: null,
     15: null,
-    2: this.players[1],
+    2: this.players[0],
     17: null,
-    3: null,
+    3: this.players[1],
     19: this.players[1],
     7: null,
     16: this.players[1],
-    8: null,
+    8: this.players[0],
     11: null,
     14: null,
     9: null,
     12: null,
-    5: null,
+    5: this.players[2],
   };
 
   public dartsPlayedSinceBeginning = 0;
@@ -65,12 +65,17 @@ export class Riskette extends Game {
         break;
       case Area.Bull:
       case Area.BullsEye:
+        
         break;
       default:
         break;
     }
 
     console.log(this.sectionsOwners);
+  }
+
+  public canCurrentPlayerCaptureSection(targetedSection: Section) {
+    return this.canPlayerCaptureSection(this.getCurrentPlayer(), targetedSection);
   }
 
   private canPlayerCaptureSection(attacker: Player, targetedSection: Section) {

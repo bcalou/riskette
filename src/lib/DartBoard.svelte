@@ -7,12 +7,16 @@
   export let game: Riskette;
   const sections = game.getSections();
 
+  // Parameters
+  export let displayNumbers = false;
+  export let displayCalibration = false;
+
   // Physical Radius of a dart board : 457mm
   // Dimensions are in mm
   // All radiuses are the outer bounds
   // from https://www.dimensions.com/element/dartboard
   const targetRadius = 451 / 2;
-  const playerMarkerRingRadius = 178;
+  const numberDistanceFromCenter = 198;
   const doubleRingRadius = 170;
   const outerSimpleRadius = doubleRingRadius - 8;
   const trebleRingRadius = 107;
@@ -30,7 +34,7 @@
   const nbSections = sections.length;
   const sectionArcRad = (Math.PI * 2) / nbSections;
   const firstNumberOffsetRad = Math.PI / 2;
-  const firstSectionArcOffsetRad = Math.PI / 2 - sectionArcRad / 2;
+  const firstSectionArcOffsetRad = Math.PI / 2 + sectionArcRad / 2;
 
   function onAreaHit(hit: Hit) {
     game.hit(hit);
@@ -47,6 +51,21 @@
   viewBox="{-targetRadius} {-targetRadius} {targetRadius * 2} {targetRadius *
     2}"
 >
+  <!-- from https://codepen.io/mathiesjanssen/pen/QgLzmM?editors=1100 -->
+  <filter id="highlight-glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feComponentTransfer in=SourceAlpha>
+      <feFuncA type="table" tableValues="1 0" />
+    </feComponentTransfer>
+    <feGaussianBlur stdDeviation="4"/>
+    <feOffset dx="0" dy="0" result="offsetblur"/>
+    <feFlood flood-color="rgb(255, 255, 255)" result="color"/>
+    <feComposite in2="offsetblur" operator="in"/>
+    <feComposite in2="SourceAlpha" operator="in" />
+    <feMerge>
+      <feMergeNode in="SourceGraphic" />
+      <feMergeNode />
+    </feMerge>
+  </filter>
   <!-- Target border -->
   <path
     d="
@@ -87,20 +106,22 @@
     )}
 
     <!-- Numbers -->
-    <text
-      x="{centerAxisX * (playerMarkerRingRadius + 20)}"
-      y="{centerAxisY * (playerMarkerRingRadius + 20)}"
-      fill="#fff"
-      style="text-align: center;"
-      text-anchor="middle"
-      dominant-baseline="middle"
-      >
-      {section}
-    </text>
+    {#if displayNumbers}
+      <text
+        x="{centerAxisX * numberDistanceFromCenter}"
+        y="{centerAxisY * numberDistanceFromCenter}"
+        style="text-align: center;"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        fill="white"
+        >
+        {section}
+      </text>
+    {/if}
 
     <!-- Player ring area -->
     <DartBoardArea
-      outerRadius={playerMarkerRingRadius}
+      outerRadius={targetRadius}
       innerRadius={doubleRingRadius}
       {leftBorderAxisX}
       {leftBorderAxisY}
@@ -117,7 +138,7 @@
       {leftBorderAxisY}
       {rightBorderAxisX}
       {rightBorderAxisY}
-      fill={doubleTrebleColor}
+      highlight={game.canCurrentPlayerCaptureSection(section)}
       stroke={dividerColor}
       onClick={() => onAreaHit({ area: Area.TrebleRing, section })}
     />
@@ -130,7 +151,7 @@
       {leftBorderAxisY}
       {rightBorderAxisX}
       {rightBorderAxisY}
-      fill={simpleColor}
+      highlight={game.canCurrentPlayerCaptureSection(section)}
       stroke={dividerColor}
       onClick={() => onAreaHit({ area: Area.TrebleRing, section })}
     />
@@ -143,7 +164,7 @@
       {leftBorderAxisY}
       {rightBorderAxisX}
       {rightBorderAxisY}
-      fill={doubleTrebleColor}
+      highlight={game.canCurrentPlayerCaptureSection(section)}
       stroke={dividerColor}
       on:click={() => onAreaHit({ area: Area.DoubleRing, section })}
     />
@@ -157,7 +178,7 @@
       {rightBorderAxisX}
       {rightBorderAxisY}
       stroke={dividerColor}
-      fill={simpleColor}
+      highlight={game.canCurrentPlayerCaptureSection(section)}
       onClick={() => onAreaHit({ area: Area.InnerSimple, section })}
     />
   {/each}
@@ -175,7 +196,6 @@
       Z
       "
     stroke={dividerColor}
-    fill={bullColor}
     on:click={() => onAreaHit({ area: Area.Bull })}
   />
 
@@ -183,9 +203,48 @@
   <circle
     r={bullsEyeRadius}
     stroke={dividerColor}
-    fill={bullsEyeColor}
     on:click={() => onAreaHit({ area: Area.BullsEye })}
   />
+  <!-- Calibration marks -->
+  <rect
+      x="{-targetRadius}"
+      y="{-targetRadius}"
+      width="5"
+      height="5"
+      fill="white"
+      stroke="none"
+      on:click={() => {displayCalibration = !displayCalibration}}
+    />
+  {#if displayCalibration}
+    <rect
+      x="{-doubleRingRadius}"
+      y="{-doubleRingRadius}"
+      width="{doubleRingRadius*2}"
+      height="{doubleRingRadius*2}"
+      fill="white"
+      stroke="none"
+    />
+    <circle
+      r={doubleRingRadius}
+      fill="black"
+      stroke="white"
+    />
+    <rect
+      x="{-bullRadius}"
+      y="{-bullRadius}"
+      width="{bullRadius*2}"
+      height="{bullRadius*2}"
+      fill="black"
+      stroke="white"
+    />
+    <circle
+      r={bullRadius}
+      fill="white"
+      stroke="none"
+    />
+    <line x1="{-doubleRingRadius}" y1="0" x2="{doubleRingRadius}" y2="0" stroke="white" />
+    <line x1="0" y1="{-doubleRingRadius}" x2="0" y2="{doubleRingRadius}" stroke="white" />
+  {/if}
 </svg>
 
 <style>

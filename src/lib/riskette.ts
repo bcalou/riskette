@@ -100,11 +100,11 @@ export class Riskette extends Game {
     return this.getSectionOwner(section) === player;
   }
 
-  private canCurrentPlayerReachSection(targetSection: Section): Boolean {
+  private canCurrentPlayerReachSection(targetSection: Section): boolean {
     return this.canPlayerReachSection(this.getCurrentPlayer(), targetSection);
   }
 
-  private canPlayerReachSection(player: Player, targetSection: Section): Boolean {
+  private canPlayerReachSection(player: Player, targetSection: Section): boolean {
     const playerSections = this.sections.filter((section) => {return this.sectionsOwners[section] === player});
 
     let canReachSection = false;

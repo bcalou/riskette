@@ -28,7 +28,7 @@
 />
 <style>
   .highlight {
-    animation: fillColor 1.5s linear infinite;
+    /* animation: fillColor 1.5s linear infinite; */
   }
 
   @keyframes fillColor {

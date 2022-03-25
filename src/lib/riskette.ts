@@ -11,22 +11,22 @@ export class Riskette extends Game {
     20: this.players[2],
     1: null,
     18: this.players[0],
-    4: null,
+    4: this.players[2],
     13: this.players[2],
     6: null,
-    10: null,
+    10: this.players[3],
     15: null,
     2: this.players[0],
-    17: null,
+    17: this.players[3],
     3: this.players[1],
     19: this.players[1],
-    7: null,
+    7: this.players[3],
     16: this.players[1],
     8: this.players[0],
     11: null,
     14: null,
     9: null,
-    12: null,
+    12: this.players[3],
     5: this.players[2],
   };
 
@@ -82,15 +82,13 @@ export class Riskette extends Game {
     const targetedSectionOwner = this.sectionsOwners[targetedSection];
     const doesAttackerOwnTargetedSection = targetedSectionOwner === attacker;
     const attackerIsAtSea = this.playersAtSea.includes(attacker);
-    const isTargetedSectionAdjacentToAttackerOwnedSections = 
-    this.getSectionNeighbors(targetedSection)
-      .filter(filteredSection => this.getPlayerSections(attacker).includes(filteredSection))
-      .length > 0;
     const canPlayerCaptureSection = 
       !doesAttackerOwnTargetedSection
       &&
+      !this.isSectionOwnedByCurrentPlayerTeamate(targetedSection)
+      &&
       (
-        isTargetedSectionAdjacentToAttackerOwnedSections
+        this.canCurrentPlayerReachSection(targetedSection)
         ||
         attackerIsAtSea
       )
@@ -100,6 +98,73 @@ export class Riskette extends Game {
 
   private isPlayerSectionOwner(player: Player, section: Section) {
     return this.getSectionOwner(section) === player;
+  }
+
+  private canCurrentPlayerReachSection(targetSection: Section): Boolean {
+    return this.canPlayerReachSection(this.getCurrentPlayer(), targetSection);
+  }
+
+  private canPlayerReachSection(player: Player, targetSection: Section): Boolean {
+    const playerSections = this.sections.filter((section) => {return this.sectionsOwners[section] === player});
+
+    let canReachSection = false;
+
+    playerSections.every(section => {
+      if(this.canSectionReachSection(section, targetSection)) {
+        canReachSection = true;
+        return false;
+      }else{
+        return true;
+      }
+    });
+
+    return canReachSection;
+  }
+
+  private canSectionReachSection(sourceSection: Section, targetSection: Section) {
+    function canReachTargetSection(path: Section[], targetSection: Section) {
+      let doesAPathExists = true;
+      path.every(section => {
+        //stop when reaching target section
+        if(section === targetSection){
+          return false
+        }
+
+        const doesTeamOwnSection = this.sectionsOwners[section] !== null && this.sectionsOwners[sourceSection].team === this.sectionsOwners[section].team;
+        if(!doesTeamOwnSection) {
+          doesAPathExists = false;
+          return false;
+        }else{
+          return true;
+        }
+  
+        
+        
+      });
+
+      return doesAPathExists;
+    }
+
+    const sourceSectionIndex = this.sections.indexOf(sourceSection);
+    const clockwisePathSections = 
+      this.sections.slice(sourceSectionIndex, this.sections.length)
+        .concat(
+          this.sections.slice(0, sourceSectionIndex)
+        );
+
+    let doesAClockWisePathExists = canReachTargetSection.call(this, clockwisePathSections, targetSection);
+
+    const antiClockWiseSections = this.sections.slice().reverse();
+    const sourceSectionAntiClockWiseIndex = antiClockWiseSections.indexOf(sourceSection);
+    const antiClockWisePathSection = 
+    antiClockWiseSections.slice(sourceSectionAntiClockWiseIndex, this.sections.length)
+        .concat(
+          antiClockWiseSections.slice(0, sourceSectionAntiClockWiseIndex)
+        );
+
+    let doesAnAntiClockWisePathExists = canReachTargetSection.call(this, antiClockWisePathSection, targetSection);
+
+    return doesAClockWisePathExists || doesAnAntiClockWisePathExists;
   }
 
   public getCurrentPlayer() {
@@ -138,5 +203,10 @@ export class Riskette extends Game {
   private getCurrentTurn() {
     const currentOverallDartNumber = this.dartsPlayedSinceBeginning;
     return Math.floor(currentOverallDartNumber / dartsPerTurn);
+  }
+
+  private isSectionOwnedByCurrentPlayerTeamate (section: Section){
+    
+    return this.sectionsOwners[section] !== null && this.sectionsOwners[section].team === this.getCurrentPlayer().team;
   }
 }

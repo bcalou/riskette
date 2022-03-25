@@ -8,13 +8,12 @@
   ];
 
   const game = new Riskette(sections, [
-    { name: "Saumon", color: "yellow", team: 0 },
-    { name: "Simon", color: "blue", team: 1 },
-    { name: "Guitou", color: "red", team: 0 },
-    { name: "Pierre", color: "purple", team: 1 },
+    { name: "Saumon", color: "yellow", team: "fr" },
+    { name: "Simon", color: "blue", team: "gb" },
+    { name: "Guitou", color: "red", team: "fr" },
+    { name: "Pierre", color: "purple", team: "gb" },
   ]);
 </script>
 <DartBoard {game} />
-
 <style>
 </style>

@@ -128,6 +128,7 @@
       {rightBorderAxisX}
       {rightBorderAxisY}
       fill={game.getSectionOwner(section)?.color}
+      flag={game.getSectionOwner(section)?.team}
     />
 
     <!-- Double ring area -->

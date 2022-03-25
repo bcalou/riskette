@@ -1,5 +1,5 @@
 export interface Player {
   name: string;
   color: string;
-  team: number;
+  team: string;
 }
